@@ -16,17 +16,19 @@ struct ContentView: View {
     @State var correctGuesses = 0
     @State var totalGuesses = 0
     
+    
     func buttonPressed(num: Int){
         totalGuesses += 1
         if num == correctAnswer{
             correctGuesses += 1
             title = "Correct"
         }else{
-            title = "Wrong"
+            title = "Wrong, this is the flag of \(countries[num])"
+            
         }
         showingScore = true
         
-        if(totalGuesses > 3){
+        if(totalGuesses > 8){
             title = "Game over"
             newGame = true
             correctGuesses = 0
@@ -85,7 +87,7 @@ struct ContentView: View {
                 Button("OK", role: .cancel) { }
             }message: {
                 if(title != "Game over"){
-                    Text("Guesses left " + String (3 - totalGuesses))
+                    Text("Guesses left " + String (8 - totalGuesses))
                 }else{
                     Text("New round!")
                 }
