@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+
+struct  FlagView: View{
+    var country: String
+    var body: some View{
+        Image(country)
+            .renderingMode(.original)
+            .clipShape(RoundedRectangle(cornerRadius: 30))
+            .shadow(radius: 5)
+    }
+    
+}
+
 struct ContentView: View {
     @State var countries = ["Japan","Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria","Poland","Russia","Spain", "UK", "US"].shuffled()
     @State var correctAnswer = Int.random(in: 0...2)
@@ -64,10 +76,8 @@ struct ContentView: View {
                                 countries.shuffle()
                                 
                             }label:{
-                                Image(countries[number])
-                                    .renderingMode(.original)
-                                    .clipShape(RoundedRectangle(cornerRadius: 30))
-                                    .shadow(radius: 5)
+                                FlagView(country: countries[number])
+                                
                             }
                         }
                     }
