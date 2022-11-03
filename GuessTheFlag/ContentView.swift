@@ -9,18 +9,21 @@ import SwiftUI
 
 
 struct  FlagView: View{
+    var fading : Bool
     var country: String
+    var animationAmount: Double
     var body: some View{
         Image(country)
             .renderingMode(.original)
             .clipShape(RoundedRectangle(cornerRadius: 30))
             .shadow(radius: 5)
     }
-    
 }
 
 struct ContentView: View {
+    @State var isFading = false
     @State var countries = ["Japan","Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria","Poland","Russia","Spain", "UK", "US"].shuffled()
+    @State var animationDict = [0:0.0, 1:0.0, 2:0.0]
     @State var correctAnswer = Int.random(in: 0...2)
     @State var showingScore = false
     @State var newGame = false
@@ -71,13 +74,24 @@ struct ContentView: View {
                         ForEach(0..<3){ number in
                             //flag was tapped
                             Button{
+                                isFading = true
                                 buttonPressed(num: number)
                                 correctAnswer = Int.random(in: 0...2)
                                 countries.shuffle()
                                 
-                            }label:{
-                                FlagView(country: countries[number])
+                                withAnimation{
+                                    animationDict[number]! += 360
+                                }
                                 
+                                
+                                
+                            }label:{
+                                FlagView(fading: isFading, country: countries[number], animationAmount: 360)
+                                    .rotation3DEffect(.degrees(animationDict[number] ?? 0), axis: (x: 0, y: 1, z: 0))
+                                    .opacity((animationDict[number] ?? 0 == 0 && isFading ) ? 0.1 : 1)
+                                    .animation(.default, value: isFading)
+                                    .scaleEffect((animationDict[number] ?? 0 == 0 && isFading ) ? 0.8 : 1)
+                                    .animation(.default, value: isFading)
                             }
                         }
                     }
@@ -94,15 +108,18 @@ struct ContentView: View {
             
         }.ignoresSafeArea()
             .alert(title, isPresented: $showingScore ) {
-                Button("OK", role: .cancel) { }
+                Button("OK", role: .cancel) {
+                    isFading = false
+                    animationDict  [0] = 0.0
+                    animationDict  [1] = 0.0
+                    animationDict  [2] = 0.0
+                }
             }message: {
                 if(title != "Game over"){
                     Text("Guesses left " + String (8 - totalGuesses))
                 }else{
                     Text("New round!")
                 }
-                
-                
             }
     }
 }
